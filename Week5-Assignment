@@ -1,0 +1,128 @@
+class Cat {
+    constructor(name, color) {
+        this.name = name;
+        this.color = color; 
+    }
+    describe() {
+        return `${this.name}'s fur is ${this.color}.`;
+    }
+}
+
+class Cafe {
+    constructor(name) {
+        this.name = name;
+        this.cats = [];
+    }
+    addCat(cat) {
+        if (cat instanceof Cat) {
+            this.cats.push(cat);
+        } else {
+            throw new Error (`You can only add an instance of Cat. Argument is not a cat: ${cat}`);
+        }
+    }
+
+    describe() {
+        return `${this.name} has ${this.cats.length} cats.`;
+    }
+}
+
+class Menu {
+    constructor() {
+        this.cafes = [];
+        this.selectedCafe = null;
+    }
+
+    start() {
+        let selection = this.showMainMenuOptions();
+
+        while (selection != 0) {
+            switch (selection) {
+                case `1`:
+                    this.createCafe();
+                    break;
+                case `2`:
+                    this.viewCafe();
+                    break;
+                case `3`:
+                    this.deleteCafe();
+                    break;
+                case `4`:
+                    this.displayCafes();
+                    break;
+                default:
+                    selection = 0;
+            }
+            selection = this.showMainMenuOptions();
+        }
+
+        alert(`Tip your purrista!`);
+    }
+
+    showMainMenuOptions() {
+        return prompt(`
+        0) exit
+        1) create new cafe
+        2) view cafe
+        3) delete cafe
+        4) display all cafes
+        `);
+    }
+
+    showCafeMenuOptions(cafeInfo) {
+        return prompt(`
+        0) back
+        1) create cat
+        2) delete cat
+        -----------------
+        ${cafeInfo}
+        `);
+    }
+
+    displayCafes() {
+        let cafeString = '';
+        for (let i = 0; i < this.cafes.length; i++) {
+            cafeString += i + ') ' + this.cafes[i].name + '\n';
+        }
+        alert(cafeString);
+    }
+
+    createCafe() {
+        let name = prompt('Enter name for new cafe:');
+        this.cafes.push(new Cafe(name));
+    }
+
+    viewCafe() {
+        let index = prompt('Enter the index of the cafe you wish to view:');
+        if (index > -1 && index < this.cafes.length) {
+            this.selectedCafe = this.cafes[index];
+            let description = 'Cafe Name: ' + this.selectedCafe.name + '\n';
+
+           for (let i = 0; i < this.selectedCafe.cats.length; i++) {
+            description += i + ') ' + this.selectedCafe.cats[i].name + ' - ' + this.selectedCafe.cats[i].color + '\n';
+           } 
+
+           let selection = this.showCafeMenuOptions(description);
+           switch (selection) {
+            case '1':
+                this.createCat();
+                break;
+            case '2':
+                this.deleteCat();
+           }
+        }
+    }
+
+    createCat() {
+        let name = prompt('Enter name for new cat:');
+        let color = prompt('Enter color for the fur of the cat:');
+        this.selectedCafe.cats.push(new Cat(name, color));
+    }
+
+    deleteCat() {
+        let index = prompt('Enter the index of the cat you wish to delete');
+        this.selectedCafe.cats.splice(index,1);
+    }
+}
+
+ let menu = new Menu();
+ menu.start()
